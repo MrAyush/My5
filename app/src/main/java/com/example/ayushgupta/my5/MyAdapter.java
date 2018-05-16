@@ -15,13 +15,12 @@ import java.io.File;
 public class MyAdapter extends BaseAdapter
 {
 
-    File files[];
+    private File files[];
     File file;
-    String path;
-    MainActivity mActivity;
+    private MainActivity mActivity;
     MyAdapter(MainActivity mActivity){
         this.mActivity = mActivity;
-        path = "/storage/sdcard0/WhatsApp/Media/WhatsApp Images/";
+        String path = "/storage/sdcard0/WhatsApp/Media/WhatsApp Images/";
         file = new File(path);
         if (!file.exists()){
             path = "/storage/emulated/0/WhatsApp/Media/WhatsApp Images/";
@@ -47,7 +46,7 @@ public class MyAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(mActivity);
-        View v = inflater.inflate(R.layout.my_list, null);
+        View v = inflater.inflate(R.layout.my_list,parent);
         ImageView iv1 = v.findViewById(R.id.iv1);
         TextView tv1 = v.findViewById(R.id.tv1);
         TextView tv2 = v.findViewById(R.id.tv2);
