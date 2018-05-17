@@ -9,8 +9,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+
+class ViewHolder{
+    TextView tv1;
+    TextView tv2;
+    ImageView iv1;
+    ImageView iv2;
+}
 
 public class MyAdapter extends BaseAdapter
 {
@@ -35,7 +43,7 @@ public class MyAdapter extends BaseAdapter
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return files[position];
     }
 
     @Override
@@ -46,26 +54,38 @@ public class MyAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(mActivity);
-        View v = inflater.inflate(R.layout.my_list,parent);
-        ImageView iv1 = v.findViewById(R.id.iv1);
-        TextView tv1 = v.findViewById(R.id.tv1);
-        TextView tv2 = v.findViewById(R.id.tv2);
-        ImageView iv2 = v.findViewById(R.id.iv2);
         final File f = files[position];
+        ViewHolder viewHolder;
+        if (convertView == null){
+            convertView = inflater.inflate(R.layout.my_list,parent,false);
+            viewHolder = new ViewHolder();
+            viewHolder.iv1 = convertView.findViewById(R.id.iv1);
+            viewHolder.tv1 = convertView.findViewById(R.id.tv1);
+            viewHolder.tv2 = convertView.findViewById(R.id.tv2);
+            viewHolder.iv2 = convertView.findViewById(R.id.iv2);
+
+            convertView.setTag(viewHolder);
+        }else{
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
         Bitmap bmp = BitmapFactory.decodeFile(f.getPath());
-        Bitmap bmp1 = ThumbnailUtils.extractThumbnail(bmp, 40, 40);
-        iv1.setImageBitmap(bmp1);
-        tv1.setText(f.getName());
-        String str = String.valueOf(f.length() / 1024.0) + " kb";
-        tv2.setText(str);
-        iv2.setOnClickListener(new View.OnClickListener() {
+        Bitmap bmp1 = ThumbnailUtils.extractThumbnail(bmp,40,40);
+        viewHolder.iv1.setImageBitmap(bmp1);
+        viewHolder.tv1.setText(f.getName());
+        String s = String.valueOf(f.length() / 1024) + " kb";
+        viewHolder.tv2.setText(s);
+        viewHolder.iv2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                f.delete();
+                boolean b = f.delete();
+                if (!b){
+                    Toast.makeText(mActivity,"Can't delete the file!!", Toast.LENGTH_SHORT).show();
+                }
                 files = file.listFiles();
                 MyAdapter.this.notifyDataSetChanged();
             }
         });
-        return v;
+
+        return convertView;
     }
 }
